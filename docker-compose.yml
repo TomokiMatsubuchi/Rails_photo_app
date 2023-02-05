@@ -7,10 +7,12 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     # dbディレクトリをホスト側に作成してコンテナ側と同期
     volumes: 
-      - "./db:/var/lib/mysql"
+      - mysql_data:/var/lib/mysql/
     # .envの環境変数を展開してMYSQLコンテナのパスワードを登録
     environment:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    ports:
+      - '3306:3306'
   
   backend:
     build:
@@ -19,6 +21,7 @@ services:
         WORKDIR: $WORKDIR
     volumes:
       - ./backend:/$WORKDIR
+      - bundle_data:/usr/local/bundle
     environment:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     ports:
@@ -36,7 +39,11 @@ services:
     volumes:
       - ./frontend:/$WORKDIR
     ports:
-      - 3000:3000
+      - 8080:8080
     depends_on:
       - backend
+    command: sh -c "cd photo && yarn serve"
 
+volumes:
+  bundle_data:
+  mysql_data:

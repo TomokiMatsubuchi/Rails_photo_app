@@ -11,6 +11,3 @@ WORKDIR ${HOME}
 
 # Alpineのリポジトリから最新インデックスを取得し、npm自体も最新版に更新する
 RUN apk update && npm install -g npm
-
-# Viteで開発サーバーを起動する
-CMD ["npm", "run", "dev"]
