@@ -1,0 +1,14 @@
+#post http://localhost:3000/api/v1/photos
+#content-type: application/json
+#
+#{
+#  "title": "title_03",
+#  "description": "description_03"
+#}
+
+POST  http://localhost:3000/graphql
+content-type: application/json
+
+{
+  "query": "query{users{id, name}}"
+}
