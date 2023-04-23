@@ -7,9 +7,10 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "articles#index"
-  namespace :api do
-    namespace :v1, format: :json do
-      resources :photos
-    end
-  end
+  
+  #namespace :api do
+  #  namespace :v1, format: :json do
+  #    resources :photos
+  #  end
+  #end
 end

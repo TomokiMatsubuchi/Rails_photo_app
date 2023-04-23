@@ -1,0 +1,10 @@
+mutation($name: String!){
+  CreateUser(input: {
+  name: $name
+  }){
+    user {
+      id
+      name
+    }
+  }
+}
