@@ -40,8 +40,12 @@
 </template>
 
 <script>
-import users from "@/apollo/gqls/queries/users";
-import CreateUser from "@/apollo/gqls/mutations/CreateUser";
+import UsersQuery from "@/pages/gqls/queries/Users.gql";
+import CreateUser from "@/pages/gqls/mutations/CreateUser.gql";
+import generateQuery from "@/plugins/generateQuery";
+
+const getUsersQuery = generateQuery(UsersQuery);
+const newUserCreateMutation = generateQuery(CreateUser);
 
 export default {
   data() {
@@ -55,28 +59,31 @@ export default {
   methods: {
     async createUser(newUser) {
       try {
-        await this.$apollo.mutate({
-          mutation: CreateUser,
+        await this.$axios.post("/graphql", {
+          query: newUserCreateMutation,
           variables: {
-            id: newUser.id,
             name: newUser.name,
           },
-          refetchQueries: [
-            {
-              query: users,
-            },
-          ],
         });
-        this.newUser = { name: "" };
-      } catch (e) {
-        window.console.log(e);
+        this.getUsers();
+        this.newUser.name = "";
+      } catch (err) {
+        console.log(err.response);
+      }
+    },
+    async getUsers() {
+      try {
+        const response = await this.$axios.post("/graphql", {
+          query: getUsersQuery,
+        });
+        this.users = response.data.data.users;
+      } catch (err) {
+        console.log(err);
       }
     },
   },
-  apollo: {
-    users: {
-      query: users,
-    },
+  created() {
+    this.getUsers();
   },
 };
 </script>

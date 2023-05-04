@@ -12,10 +12,8 @@
     "lintfix": "yarn lint:js --fix"
   },
   "dependencies": {
-    "@nuxtjs/apollo": "^4.0.1-rc.5",
+    "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/vuetify": "^1.12.3",
-    "apollo-cache-inmemory": "^1.6.6",
-    "apollo-link-http": "^1.5.17",
     "core-js": "^3.25.3",
     "graphql": "^16.6.0",
     "graphql-tag": "^2.12.6",
