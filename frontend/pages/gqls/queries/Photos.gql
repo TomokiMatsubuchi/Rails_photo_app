@@ -1,0 +1,7 @@
+query PhotosQuery {
+  photos {
+    id
+    title
+    description
+  }
+}

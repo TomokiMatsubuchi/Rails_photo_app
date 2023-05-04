@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-toolbar fixed>
-      <v-toolbar-title v-text="title" />
+      <v-toolbar-title />
     </v-toolbar>
     <v-content>
       <nuxt />
@@ -18,8 +18,8 @@
 export default {
   data() {
     return {
-      title: 'Users'
-    }
-  }
-}
+      title: "Users",
+    };
+  },
+};
 </script>

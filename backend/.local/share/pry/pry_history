@@ -1,0 +1,12 @@
+params
+next
+result
+return_value
+next
+result
+params
+params[:query]
+params[:query][:source]
+params[:query][:loc][:source]
+params[:query][:loc][:source].to_s
+next

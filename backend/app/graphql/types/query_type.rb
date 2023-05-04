@@ -26,5 +26,8 @@ module Types
 
     field :users, resolver: Queries::Resolvers::Users
     field :user, resolver: Queries::Resolvers::User
+    
+    field :photos, resolver: Queries::Resolvers::Photos
+    field :photo, resolver: Queries::Resolvers::Photo
   end
 end
