@@ -10,3 +10,7 @@ params[:query][:source]
 params[:query][:loc][:source]
 params[:query][:loc][:source].to_s
 next
+Photo.all
+Photo.create!(title: "test", description: "test")
+Photo.all
+exit

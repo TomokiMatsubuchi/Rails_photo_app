@@ -8,5 +8,6 @@ module Types
     end
     
     field :create_user, mutation: Mutations::CreateUser
+    field :create_photo, mutation: Mutations::CreatePhoto
   end
 end
