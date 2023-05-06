@@ -1,0 +1,9 @@
+mutation CreatePhoto($id: ID!, $title: String!, $description: String!) {
+  updatePhoto(input: { id: $id, title: $title, description: $description }) {
+    photo {
+      id
+      title
+      description
+    }
+  }
+}

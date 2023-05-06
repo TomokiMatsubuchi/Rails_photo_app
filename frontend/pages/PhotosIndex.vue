@@ -27,13 +27,38 @@
 
     <v-row>
       <v-col v-for="photo in photos" :key="photo.id" cols="12" md="6" lg="4">
-        <v-card>
+        <v-card @click="showPhotoDetailModal(photo)">
           <!--<v-img :src="photo.imageUrl" alt="Photo"></v-img>-->
           <v-card-title>{{ photo.title }}</v-card-title>
           <v-card-text>{{ photo.description }}</v-card-text>
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- 写真詳細情報モーダル -->
+    <v-dialog v-model="showPhotoDetail" max-width="400">
+      <v-card>
+        <v-card-title>{{ selectedPhoto.title }}</v-card-title>
+        <v-card-text>{{ selectedPhoto.description }}</v-card-text>
+        <v-btn color="primary" @click="prepareEdit" v-if="!isEditing"
+          >編集</v-btn
+        >
+        <v-btn color="red" @click="deletePhoto(selectedPhoto)" v-if="!isEditing"
+          >削除</v-btn
+        >
+
+        <v-form v-if="isEditing">
+          <v-text-field
+            label="タイトル"
+            v-model="editedTitle"
+            required
+          ></v-text-field>
+          <v-text-field label="説明" v-model="editedDescription"></v-text-field>
+          <v-btn color="primary" @click="editPhoto">保存</v-btn>
+          <v-btn @click="cancelEdit">キャンセル</v-btn>
+        </v-form>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -41,9 +66,11 @@
 import generateQuery from "@/plugins/generateQuery";
 import photosQuery from "@/pages/gqls/queries/Photos.gql";
 import createPhotoMutation from "@/pages/gqls/mutations/CreatePhoto.gql";
+import upPhotoMutation from "@/pages/gqls/mutations/UpdatePhoto.gql";
 
 const getPhotosQuery = generateQuery(photosQuery);
 const addPhotoMutation = generateQuery(createPhotoMutation);
+const updatePhotoMutation = generateQuery(upPhotoMutation);
 
 export default {
   data() {
@@ -54,6 +81,9 @@ export default {
         title: "",
         description: "",
       }, // 新規写真作成用データ
+      showPhotoDetail: false,
+      selectedPhoto: {},
+      isEditing: false,
     };
   },
   methods: {
@@ -87,6 +117,36 @@ export default {
         };
       } catch (err) {
         console.log(err);
+      }
+    },
+    showPhotoDetailModal(photo) {
+      this.showPhotoDetail = true;
+      this.selectedPhoto = photo;
+    },
+    prepareEdit() {
+      this.isEditing = true;
+      this.editedTitle = this.selectedPhoto.title;
+      this.editedDescription = this.selectedPhoto.description;
+    },
+    cancelEdit() {
+      this.isEditing = false;
+    },
+    async editPhoto() {
+      try {
+        await this.$axios.post("/graphql", {
+          query: updatePhotoMutation,
+          variables: {
+            id: this.selectedPhoto.id,
+            title: this.editedTitle,
+            description: this.editedDescription,
+          },
+        });
+        this.selectedPhoto.title = this.editedTitle;
+        this.selectedPhoto.description = this.editedDescription;
+        // 編集フォームを閉じる
+        this.cancelEdit();
+      } catch (err) {
+        console.error(err);
       }
     },
   },
