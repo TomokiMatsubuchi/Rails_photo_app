@@ -1,6 +1,7 @@
 mutation CreatePhoto($title: String!, $description: String!) {
   createPhoto(input: { title: $title, description: $description }) {
     photo {
+      id
       title
       description
     }

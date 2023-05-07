@@ -14,3 +14,14 @@ Photo.all
 Photo.create!(title: "test", description: "test")
 Photo.all
 exit
+n
+next
+photo
+next
+exit
+photo
+exit
+photo.id
+photo
+photo.errors
+exit

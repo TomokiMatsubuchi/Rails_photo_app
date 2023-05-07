@@ -31,6 +31,10 @@
           <!--<v-img :src="photo.imageUrl" alt="Photo"></v-img>-->
           <v-card-title>{{ photo.title }}</v-card-title>
           <v-card-text>{{ photo.description }}</v-card-text>
+          <v-btn color="error" @click="deletePhoto(photo)" class="ml-auto">
+            <v-icon>mdi-delete</v-icon>
+            <span>Delete</span>
+          </v-btn>
         </v-card>
       </v-col>
     </v-row>
@@ -40,11 +44,11 @@
       <v-card>
         <v-card-title>{{ selectedPhoto.title }}</v-card-title>
         <v-card-text>{{ selectedPhoto.description }}</v-card-text>
-        <v-btn color="primary" @click="prepareEdit" v-if="!isEditing"
-          >編集</v-btn
+        <v-btn @click="prepareEdit" v-if="!isEditing"
+          ><v-icon>mdi-pencil</v-icon></v-btn
         >
-        <v-btn color="red" @click="deletePhoto(selectedPhoto)" v-if="!isEditing"
-          >削除</v-btn
+        <v-btn @click="deletePhoto(selectedPhoto)" v-if="!isEditing"
+          ><v-icon>mdi-delete</v-icon></v-btn
         >
 
         <v-form v-if="isEditing">
@@ -67,10 +71,12 @@ import generateQuery from "@/plugins/generateQuery";
 import photosQuery from "@/pages/gqls/queries/Photos.gql";
 import createPhotoMutation from "@/pages/gqls/mutations/CreatePhoto.gql";
 import upPhotoMutation from "@/pages/gqls/mutations/UpdatePhoto.gql";
+import delPhotoMutation from "@/pages/gqls/mutations/DeletePhoto.gql";
 
 const getPhotosQuery = generateQuery(photosQuery);
 const addPhotoMutation = generateQuery(createPhotoMutation);
 const updatePhotoMutation = generateQuery(upPhotoMutation);
+const deletePhotoMutation = generateQuery(delPhotoMutation);
 
 export default {
   data() {
@@ -78,6 +84,7 @@ export default {
       photos: [],
       showCreateModal: false, // モーダルを表示するかどうかのフラグ
       newPhoto: {
+        id: "",
         title: "",
         description: "",
       }, // 新規写真作成用データ
@@ -99,19 +106,21 @@ export default {
     },
     async createPhoto() {
       try {
-        await this.$axios.post("/graphql", {
+        const response = await this.$axios.post("/graphql", {
           query: addPhotoMutation,
           variables: {
             title: this.newPhoto.title,
             description: this.newPhoto.description,
           },
         });
+        this.newPhoto.id = response.data.data.createPhoto.photo.id;
         // 新しいPhotoを配列の先頭に追加
         this.photos.push(this.newPhoto);
         // モーダルを閉じる
         this.showCreateModal = false;
         // フォーム情報を初期化
         this.newPhoto = {
+          id: "",
           title: "",
           description: "",
         };
@@ -145,6 +154,18 @@ export default {
         this.selectedPhoto.description = this.editedDescription;
         // 編集フォームを閉じる
         this.cancelEdit();
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    async deletePhoto(photo) {
+      try {
+        await this.$axios.post("/graphql", {
+          query: deletePhotoMutation,
+          variables: { id: photo.id },
+        });
+        this.photos = this.photos.filter((p) => p.id !== photo.id);
+        this.showPhotoDetail = false;
       } catch (err) {
         console.error(err);
       }
