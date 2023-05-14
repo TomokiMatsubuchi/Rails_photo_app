@@ -30,25 +30,21 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ["@nuxtjs/axios", "@nuxtjs/vuetify"],
+  modules: ["@nuxtjs/axios", "@nuxtjs/vuetify", "@nuxtjs/apollo"],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {
-    extend(config) {
-      config.module.rules.push({
-        test: /\.(graphql|gql)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "graphql-tag/loader",
-        },
-      });
-    },
-  },
+  build: {},
 
   axios: {
     baseURL: "http://localhost:3000",
   },
-
+  apollo: {
+    clientConfigs: {
+      default: {
+        httpEndpoint: "http://localhost:3000/graphql",
+      },
+    },
+  },
   server: {
     host: "0.0.0.0",
     port: 8000,

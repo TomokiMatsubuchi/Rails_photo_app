@@ -70,13 +70,10 @@
 import generateQuery from "@/plugins/generateQuery";
 import photosQuery from "@/pages/gqls/queries/Photos.gql";
 import createPhotoMutation from "@/pages/gqls/mutations/CreatePhoto.gql";
-import upPhotoMutation from "@/pages/gqls/mutations/UpdatePhoto.gql";
-import delPhotoMutation from "@/pages/gqls/mutations/DeletePhoto.gql";
+import updatePhotoMutation from "@/pages/gqls/mutations/UpdatePhoto.gql";
+import deletePhotoMutation from "@/pages/gqls/mutations/DeletePhoto.gql";
 
 const getPhotosQuery = generateQuery(photosQuery);
-const addPhotoMutation = generateQuery(createPhotoMutation);
-const updatePhotoMutation = generateQuery(upPhotoMutation);
-const deletePhotoMutation = generateQuery(delPhotoMutation);
 
 export default {
   data() {
@@ -106,14 +103,15 @@ export default {
     },
     async createPhoto() {
       try {
-        const response = await this.$axios.post("/graphql", {
-          query: addPhotoMutation,
+        const response = await this.$apollo.mutate({
+          mutation: createPhotoMutation,
           variables: {
             title: this.newPhoto.title,
             description: this.newPhoto.description,
           },
         });
-        this.newPhoto.id = response.data.data.createPhoto.photo.id;
+        console.log(response);
+        this.newPhoto.id = response.data.createPhoto.photo.id;
         // 新しいPhotoを配列の先頭に追加
         this.photos.push(this.newPhoto);
         // モーダルを閉じる
@@ -142,8 +140,8 @@ export default {
     },
     async editPhoto() {
       try {
-        await this.$axios.post("/graphql", {
-          query: updatePhotoMutation,
+        await this.$apollo.mutate({
+          mutation: updatePhotoMutation,
           variables: {
             id: this.selectedPhoto.id,
             title: this.editedTitle,
@@ -160,8 +158,8 @@ export default {
     },
     async deletePhoto(photo) {
       try {
-        await this.$axios.post("/graphql", {
-          query: deletePhotoMutation,
+        await this.$apollo.mutate({
+          mutation: deletePhotoMutation,
           variables: { id: photo.id },
         });
         this.photos = this.photos.filter((p) => p.id !== photo.id);
