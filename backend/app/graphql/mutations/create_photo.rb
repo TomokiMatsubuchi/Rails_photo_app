@@ -4,6 +4,7 @@ module Mutations
 
     argument :title, String, required: true
     argument :description, String, required: true
+    
 
     def resolve(params)
       photo = Photo.new(title: params[:title], description: params[:description])
